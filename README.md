@@ -1,3 +1,7 @@
+<p align="center">
+<img src="resource/images/Global-Header_MCCB-Logo.png">
+</p>
+
 ## Legal Notice
 **This launcher is intended only for Minecraft Java Edition.**
 
