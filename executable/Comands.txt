@@ -2,3 +2,10 @@ Generate executable .jar:
 javac *.java
 
 "C:\Program Files\Java\jdk-26.0.1\bin\jar.exe" cfm Launcher.jar manifest.txt *.class resource/
+
+
+
+Generate JRE (Java executable included):
+"C:\Program Files\Java\jdk-26.0.1\bin\jdeps" --print-module-deps --ignore-missing-deps Launcher.jar
+
+"C:\Program Files\Java\jdk-26.0.1\bin\jlink" --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules java.base,java.desktop --output jre

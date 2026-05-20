@@ -18,9 +18,38 @@ public class MinecraftLauncher extends JFrame {
     // ==========================================
     // RESOURCES
     // ==========================================
-    private static final String BACKGROUND_RESOURCE = "resource/minecraft_caves_2560x1440.png";
-    private static final String LOGO_RESOURCE       = "resource/Global-Header_MCCB-Logo.png";
-    private static final String ICON_RESOURCE       = "resource/icon_64x64.png";
+    private static final String BACKGROUND_RESOURCE = "resource/images/minecraft_caves_2560x1440.png";
+    private static final String LOGO_RESOURCE       = "resource/images/Global-Header_MCCB-Logo.png";
+    private static final String ICON_RESOURCE       = "resource/images/icon_64x64.png";
+    private static final String FONT_RESOURCE       = "resource/fonts/Minecraft.otf";
+    private static final String FONT_BOLD_RESOURCE       = "resource/fonts/Minecraft-Bold.otf";
+
+    // ==========================================
+    // FONTS Minecraft
+    // ==========================================
+    private static Font minecraftFont;
+    private static Font minecraftBoldFont;
+
+    private static Font getMinecraftFont(float size) {
+        return loadFont(minecraftFont, FONT_RESOURCE, size);
+    }
+
+    private static Font getMinecraftBoldFont(float size) {
+        return loadFont(minecraftBoldFont, FONT_BOLD_RESOURCE, size);
+    }
+
+    private static Font loadFont(Font cache, String resource, float size) {
+        if (cache == null) {
+            try {
+                URL fontUrl = MinecraftLauncher.class.getResource(resource);
+                cache = Font.createFont(Font.TRUETYPE_FONT, fontUrl.openStream());
+                GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(cache);
+            } catch (Exception e) {
+                cache = new Font("Monospaced", Font.BOLD, 12);
+            }
+        }
+        return cache.deriveFont(size);
+    }
 
     // ==========================================
     // UI THEME
@@ -225,16 +254,24 @@ public class MinecraftLauncher extends JFrame {
     // ==========================================
     // UI COMPONENT FACTORIES
     // ==========================================
+    private Image backgroundImage;
+
     private JPanel createBackgroundPanel() {
         JPanel panel = new JPanel() {
-            @Override protected void paintComponent(Graphics g) {
+            @Override
+            protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                URL imgUrl = getClass().getResource(BACKGROUND_RESOURCE);
-                if (imgUrl != null) {
-                    g.drawImage(new ImageIcon(imgUrl).getImage(), 0, 0, getWidth(), getHeight(), this);
+                if (backgroundImage == null) {
+                    URL url = getClass().getResource(BACKGROUND_RESOURCE);
+                    if (url != null) backgroundImage = new ImageIcon(url).getImage();
+                }
+                Graphics2D g2 = (Graphics2D) g;
+                if (backgroundImage != null) {
+                    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                    g2.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
                 } else {
-                    g.setColor(new Color(20, 20, 20));
-                    g.fillRect(0, 0, getWidth(), getHeight());
+                    g2.setColor(new Color(20, 20, 20));
+                    g2.fillRect(0, 0, getWidth(), getHeight());
                 }
             }
         };
@@ -252,7 +289,7 @@ public class MinecraftLauncher extends JFrame {
         } else {
             lbl.setText("MINECRAFT LAUNCHER");
             lbl.setForeground(TEXT_COLOR);
-            lbl.setFont(new Font("Arial", Font.BOLD, 22));
+            lbl.setFont(getMinecraftFont(22f));
         }
         return lbl;
     }
@@ -261,7 +298,7 @@ public class MinecraftLauncher extends JFrame {
         JLabel lbl = new JLabel(text);
         lbl.setForeground(TEXT_COLOR);
         lbl.setBorder(new EmptyBorder(0, 5, 0, 0));
-        lbl.setFont(new Font("Arial", Font.BOLD, 13));
+        lbl.setFont(getMinecraftFont(13f));
         return lbl;
     }
 
@@ -306,7 +343,7 @@ public class MinecraftLauncher extends JFrame {
 
     private JButton createSmallButton(String text, java.awt.event.ActionListener action) {
         JButton btn = new JButton(text);
-        btn.setFont(new Font("Arial", Font.BOLD, 12));
+        btn.setFont(getMinecraftFont(12f));
         btn.setBackground(BUTTON_BG);
         btn.setForeground(TEXT_COLOR);
         btn.setFocusPainted(false);
@@ -318,7 +355,7 @@ public class MinecraftLauncher extends JFrame {
 
     private JButton createLaunchButton() {
         JButton btn = new JButton("JOGAR");
-        btn.setFont(new Font("Arial", Font.BOLD, 18));
+        btn.setFont(getMinecraftBoldFont(18f));
         btn.setBackground(LAUNCH_GREEN);
         btn.setForeground(TEXT_COLOR);
         btn.setBorderPainted(false);
